@@ -105,7 +105,7 @@ class FileCollector {
 
         // scan only files, not directories
         dir.eachFileRecurse(FileType.FILES) { file ->
-            if (isHtmlFile(file)) {
+            if (isHtmlFile(file) && !file.name.startsWith("_") && !file.path.replaceAll('\\\\', '/').contains("/common/")) {
                 files.add(file)
             }
         }

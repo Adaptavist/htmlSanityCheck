@@ -10,16 +10,18 @@ buildscript {
         }
         jcenter()
     }
+
+    dependencies {
+        classpath "net.linguica.gradle:maven-settings-plugin:0.5"
+    }
 }
 
 plugins {
     id 'groovy'
     id 'java'
-    id "com.gradle.plugin-publish" version "0.9.10"
 
     // to report build results back to gradle.org
     id 'com.gradle.build-scan' version '1.16'
-
 }
 
 repositories {
@@ -72,10 +74,10 @@ apply plugin: 'java-gradle-plugin'
 apply plugin: 'codenarc'
 
 // publish to gradle-plugin-repository
-apply plugin: "com.gradle.plugin-publish"
 
 // publish to (local) maven repo
 apply plugin: 'maven-publish'
+apply plugin: "net.linguica.maven-settings"
 //apply from: "config/publish-snapshot.gradle"
 
 apply from: 'config/codenarc.gradle'
@@ -130,16 +132,21 @@ publishing {
             version project.version
             from components.java
         }
+    }
 
+    repositories {
+        maven {
+            name = 'nexus'
+            url = project.version.endsWith('-SNAPSHOT') ?
+                "https://nexus.adaptavist.com/content/repositories/adaptavist-snapshots" :
+                "https://nexus.adaptavist.com/content/repositories/adaptavist"
+        }
     }
 }
 
 // =========================================================
 
 apply from: 'config/buildScan.gradle'
-
-apply from: 'config/publish-gradle-plugin.gradle'
-
 
 task info(
         description: "info on path and objects"
